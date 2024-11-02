@@ -73,53 +73,42 @@
     function report(event) {
         console.log('clicou');
         event.preventDefault();
-
-
+    
         // Get the URL input value
         const linkElement = document.querySelector('[name="url"]');
         const link = linkElement.value;
-                console.log( document.querySelector('[name="detail"]').value)
-
+    
         // Verifica se o link não é nulo nem vazio
         if (link !== null && link !== "") {
-            const card = document.querySelector(`dds-card-group-item[href="${link}"], dds-button-cta[href="${link}"]`);
-            if(card === null){
+            const elementsWithHref = document.querySelectorAll(`[href="${link}"]`);
+            console.log(elementsWithHref);
+    
+            if (elementsWithHref.length === 0) {
                 alert('Link not found');
-                return
+                return;
             }
-
-            //Function that handle the item and paramenters of the element
-            function handleItem(card) {
-                const issue = document.querySelector('[name="issues"]').value;
-                const description = document.querySelector('[name="detail"]').value;
-                let identifier;
-                let type;
-
-                //Card element
-                if (card.tagName === "DDS-CARD-GROUP-ITEM") {
-                    identifier = card.querySelector('dds-card-heading').textContent.trim();
-                    type = "heading";
-                } else
-
-                //Button Element
-                if (card.tagName === 'DDS-BUTTON-CTA') {
-                    identifier = card.querySelector('span').textContent.trim();
-                    type = "cta";
-                }
-
-                if (identifier) {
-                    logReport(issue, link, description, type, identifier);
-                    clearInputs();
-                } else {
-                    alert("Item not found!");
-                }
-            }
-
-            handleItem(card);
+    
+            // Itera sobre todos os elementos encontrados com o mesmo href
+            elementsWithHref.forEach(card => {
+                handleItem(card, link); // Passa o link aqui
+            });
         } else {
             alert("Link inválido");
         }
     }
+    
+    function handleItem(card, link) {
+        const issue = document.querySelector('[name="issues"]').value;
+        const description = document.querySelector('[name="detail"]').value;
+    
+        // Pega qualquer texto dentro do elemento
+        const identifier = card.textContent.trim();
+    
+        // Loga o relatório para cada elemento encontrado
+        logReport(issue, link, description, "element", identifier);
+        clearInputs();
+    }
+    
 
     // Cria a estrutura da lista de relatórios
     const notificationIcon = document.createElement('div');
