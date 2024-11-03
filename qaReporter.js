@@ -18,32 +18,44 @@
         menu.className = 'menu';
 
         menu.insertAdjacentHTML('afterBegin', `
+        <div class='header'>
+            <span class='stepTitle' >QA Reporter</span>
+            <span style="font-size:14px">v1.01</span>
+        </div>    
+        <div class="floatinIcons">
+            <i data-function="list">📄</i>
+            <i>📋</i>
+        </div>
+        <section class="report">        
         <form class="form">
             <div class="step">
-                <p class="stepTitle">1. Step one</p>
-                <label for="url">Paste the URL</label>
+                <p class="stepTitle">1.Paste the URL</p>
                 <input type="text" id="url" name="url"></input>
             </div>
             <div class="step">
                 <p class="stepTitle">2. Select the issue</p>
-                <label for="issues">Select an issue:</label>
                 <select name="issues" id="issue">
                     <option value="Broken Link">Broken Link</option>
                     <option value="Redirect">Redirect</option>
+                    <option value="Video">Broken Video</option>
+                    <option value="Image">Broken Image</option>
                     <option value="Other">Other</option>
                 </select>
             </div>
             <div class="step">
                 <p class="stepTitle">3. Description (Optional)</p>
-                <label for="detail">Select an issue:</label>
 
                 <input type="text" id="detail" class="input" name="detail">
             </div>
             <div class="step">
-                <p class="stepTitle">4. Press REPORT</p>
                 <input type="button" value="Report!" class="button" id="reportButton">
             </div>
         </form>
+        </section>
+        <section class="currentList">
+          <textarea></textarea>  
+        </section>
+
         `);
         document.body.appendChild(menu);
 
@@ -58,6 +70,7 @@
         document.getElementById("issue").selectedIndex = 0;
         document.getElementById("detail").value = "";
     }
+
 
     //Define the report text structure
     function logReport(issue, link, description, type, identifier) {
@@ -134,18 +147,37 @@
 
         .menu {
             position: fixed;
-            bottom: 10%;
+            bottom: 12%;
             left: 1%;
-            width: auto; /* Alterado para auto para o ajuste dinâmico */
-            height: auto; /* Alterado para auto para o ajuste dinâmico */
+            width: 16%; 
+            height: auto; 
             display: none;
-            align-items: center;
-            justify-content: center;
+            flex-direction:column;
+            align-items: normal;
+            justify-content: space-around;
             background-color: #D7D7D7;
             font-family: "IBM Plex Sans", sans-serif !important;
-            padding: 2em 4em;
-            row-gap: 1em !important;
+            padding: 2em 2em;
+            row-gap: 3em !important;
             z-index: 9999;
+            border-radius:6px;
+            
+        }
+
+        .menu.dark{
+            background:#161616;
+            color:#FFF;
+        }
+        .floatinIcons{
+            position:absolute;
+             top:5%;
+             right:5%;
+        }
+        .header{ 
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:0.3rem;
         }
 
         .form {
@@ -171,12 +203,12 @@
             position: fixed;
             bottom: 5%;
             left: 1%;
-            transition: transform 0.3s ease; /* Suaviza a rotação */
+            transition: transform 0.3s ease; 
             z-index: 999;
         }
 
         .rotate {
-            transform: rotate(45deg); /* Define a rotação para 45 graus */
+            transform: rotate(45deg); 
         }
 
         .stepTitle {
@@ -203,11 +235,12 @@
         }
 
         input, select {
-            height: 48px; /* Corrigido */
+            width:auto;
+            height: 48px; 
             padding: 15px 16px;
             gap: 16px;
-            border: 1px solid transparent; /* Corrigido para bordas */
-            opacity: 1; /* Corrigido para visibilidade */
+            border: 1px solid transparent; 
+            opacity: 1; 
         }
 
         .label {
@@ -217,11 +250,18 @@
             letter-spacing: 0.3199999928474426px;
             text-align: left;
         }
+
+        .report{
+            display:block;
+        }
+        .currentList{
+            display:none;
+        }
     `;
 
     document.querySelector('body').appendChild(theStyle);
 
-    // Importando a fonte IBM
+    // IBM Plex Font
     var link = document.createElement('link');
     link.setAttribute('rel', 'stylesheet');
     link.setAttribute('href', 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
