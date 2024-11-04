@@ -13,20 +13,23 @@
 (function() {
     'use strict';
 
+    let listSection;
+    let reportSection
+
     const Reporter = () => {
+        
         const menu = document.createElement('div');
         menu.className = 'menu';
-
         menu.insertAdjacentHTML('afterBegin', `
         <div class='header'>
             <span class='stepTitle' >QA Reporter</span>
             <span style="font-size:14px">v1.01</span>
         </div>    
         <div class="floatinIcons">
-            <i data-function="list">📄</i>
+            <span data-function="list" class='switcher'>📄</span>
             <i>📋</i>
         </div>
-        <section class="report">        
+        <section class="reportSection">        
         <form class="form">
             <div class="step">
                 <p class="stepTitle">1.Paste the URL</p>
@@ -52,12 +55,16 @@
             </div>
         </form>
         </section>
-        <section class="currentList">
-          <textarea></textarea>  
+        <section class="listSection input">
+          
         </section>
 
         `);
         document.body.appendChild(menu);
+        
+        reportSection = menu.querySelector('.reportSection');
+        listSection = menu.querySelector('.listSection')
+
 
         // Adiciona o evento de clique ao botão de relatório
         const reportButton = document.getElementById("reportButton");
@@ -75,23 +82,25 @@
     //Define the report text structure
     function logReport(issue, link, description, type, identifier) {
         const typeLabel = type === "heading" ? "Heading" : "CTA";
-        console.log(`
-            Report submitted!\n
-            *Issue:* ${issue}\n
-            *${typeLabel}:* ${identifier}\n
-            *URL:* ${link}\n
-            ${description !== '' ? `*Description:* ${description}` : ''}`);
+        const reportedItem = `
+        <table>
+            <tr>Report submitted!\n</tr><br>
+             <tr>*Issue:* ${issue}\n</tr><br>
+            <tr>*${typeLabel}:* ${identifier}\n </tr><br>
+             <tr>*URL:* ${link}\n</tr><br>
+             <tr>${description !== '' ? `*Description:* ${description}` : '' }</tr><br>
+        </table>
+            
+            `;
+
+        listSection.insertAdjacentHTML('afterBegin',reportedItem) 
+            
     }
 
     function report(event) {
-        console.log('clicou');
         event.preventDefault();
-    
-        // Get the URL input value
         const linkElement = document.querySelector('[name="url"]');
         const link = linkElement.value;
-    
-        // Verifica se o link não é nulo nem vazio
         if (link !== null && link !== "") {
             const elementsWithHref = document.querySelectorAll(`[href="${link}"]`);
             console.log(elementsWithHref);
@@ -101,9 +110,8 @@
                 return;
             }
     
-            // Itera sobre todos os elementos encontrados com o mesmo href
             elementsWithHref.forEach(card => {
-                handleItem(card, link); // Passa o link aqui
+                handleItem(card, link);
             });
         } else {
             alert("Link inválido");
@@ -113,29 +121,43 @@
     function handleItem(card, link) {
         const issue = document.querySelector('[name="issues"]').value;
         const description = document.querySelector('[name="detail"]').value;
-    
-        // Pega qualquer texto dentro do elemento
         const identifier = card.textContent.trim();
-    
-        // Loga o relatório para cada elemento encontrado
         logReport(issue, link, description, "element", identifier);
         clearInputs();
     }
     
 
-    // Cria a estrutura da lista de relatórios
-    const notificationIcon = document.createElement('div');
-    notificationIcon.classList.add('expandIcon');
-    notificationIcon.textContent = '+'; // Ícone de copiar
-    document.body.appendChild(notificationIcon);
-
-    // Adiciona funcionalidade para expandir/recolher a lista
-    notificationIcon.onclick = function() {
+    // Expand button
+    const expandBtn = document.createElement('div');
+    expandBtn.classList.add('expandIcon');
+    expandBtn.textContent = '+';
+    document.body.appendChild(expandBtn);
+    expandBtn.onclick = function() {
         const menu = document.querySelector('.menu');
         menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
-        notificationIcon.classList.toggle('rotate');
+        expandBtn.classList.toggle('rotate');
+        
+
+    //Switch Sections
+    const iconSwitch = document.querySelector(`.switcher`);
+    iconSwitch.classList.add('iconSwitcher')
+    if (iconSwitch) {
+        iconSwitch.onclick = () => { reportSection.style.display = (reportSection.style.display === 'block' ? 'none' : 'block')
+                                     listSection.style.display = (listSection.style.display === 'none' ? 'flex' : 'none')   
+
+        };
+    }
     };
 
+
+
+
+        // IBM Plex Font
+        var link = document.createElement('link');
+        link.setAttribute('rel', 'stylesheet');
+        link.setAttribute('href', 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
+        document.head.appendChild(link);
+    
     const theStyle = document.createElement('STYLE');
 
     // Styling elements
@@ -150,7 +172,7 @@
             bottom: 12%;
             left: 1%;
             width: 16%; 
-            height: auto; 
+            max-height: 80%; 
             display: none;
             flex-direction:column;
             align-items: normal;
@@ -167,6 +189,16 @@
         .menu.dark{
             background:#161616;
             color:#FFF;
+        }
+
+        .listSection{
+            display:none ;
+            flex-direction:column;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            max-height:40vh;
+            background-color:#FFF;
+            
         }
         .floatinIcons{
             position:absolute;
@@ -257,15 +289,15 @@
         .currentList{
             display:none;
         }
+
+        .iconSwitcher{
+            cursor:pointer;
+            user-select: none;
+
+        }
     `;
 
     document.querySelector('body').appendChild(theStyle);
-
-    // IBM Plex Font
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('href', 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
-    document.head.appendChild(link);
 
     //start the Reporter
     Reporter();
