@@ -114,9 +114,8 @@
         const typeLabel = type === "heading" ? "Heading" : "CTA";
         const reportedItem = `
         <table>
-             <tr>Report submitted!\n</tr><br>
              <tr>*Issue:* ${issue}\n</tr><br>
-            <tr>*${typeLabel}:* ${identifier}\n </tr><br>
+             <tr>*${typeLabel}:* ${identifier}\n </tr><br>
              <tr>*URL:* ${link}\n</tr><br>
              <tr>${description !== '' ? `*Description:* ${description}` : '' }</tr><br>
         </table>
