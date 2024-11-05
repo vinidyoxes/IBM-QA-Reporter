@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         QA Reporter
-// @version      0.1.1
-// @description  Just a helper for doing reports!
-// @author       Vinicius Ortega <- contact any of us for help
+// @version      1.0.1
+// @description  Just a tool for doing reports!
+// @author       Vinicius Ortega <- contact for help
 // @match        https://www.ibm.com/*
 // @match        http://127.0.0.1:5500/*
 // @match        https://author-p131558-e1281329.adobeaemcloud.com/*
@@ -14,7 +14,8 @@
     'use strict';
 
     let listSection;
-    let reportSection
+    let reportSection;
+    const version = "1.0.1";
 
     const Reporter = () => {
         
@@ -23,12 +24,22 @@
         menu.insertAdjacentHTML('afterBegin', `
         <div class='header'>
             <span class='stepTitle' >QA Reporter</span>
-            <span style="font-size:14px">v1.01</span>
-        </div>    
-        <div class="floatinIcons">
-            <span data-function="list" class='switcher'>📄</span>
-            <i>📋</i>
+            <span style="font-size:14px">v${version}</span>
+            <div class="floatinIcons">
+            <i data-function="list" class='switcher' >
+               <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5"/>
+                </svg>
+
+            </i> 
+
+            <i class='copyIcon'><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M9 8v3a1 1 0 0 1-1 1H5m11 4h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1m4 3v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-7.13a1 1 0 0 1 .24-.65L7.7 8.35A1 1 0 0 1 8.46 8H13a1 1 0 0 1 1 1Z"/>
+                </svg>
+            </i>
         </div>
+        </div>    
+        
         <section class="reportSection">        
         <form class="form">
             <div class="step">
@@ -56,6 +67,7 @@
         </form>
         </section>
         <section class="listSection input">
+            
           
         </section>
 
@@ -65,11 +77,29 @@
         reportSection = menu.querySelector('.reportSection');
         listSection = menu.querySelector('.listSection')
 
-
-        // Adiciona o evento de clique ao botão de relatório
+        //Report button    
         const reportButton = document.getElementById("reportButton");
         reportButton.onclick = report;
+
+         //Switch Sections
+         const iconSwitch = document.querySelector(`.switcher`);
+         iconSwitch.classList.add('iconSwitcher')
+         if (iconSwitch) {
+             iconSwitch.onclick = () => { 
+                 
+                 reportSection.style.display = (reportSection.style.display == 'block' ? 'none' : 'block')
+                                          listSection.style.display = (listSection.style.display == 'none' ? 'flex' : 'none')   
+     
+             };
+         }
+     
+        const iconCopy = document.querySelector('.copyIcon');
+        if (iconCopy) {
+            iconCopy.onclick = copyToClipboard;
+        } 
+        
     };
+    
 
     //Clear inputs
     function clearInputs(){
@@ -84,16 +114,14 @@
         const typeLabel = type === "heading" ? "Heading" : "CTA";
         const reportedItem = `
         <table>
-            <tr>Report submitted!\n</tr><br>
+             <tr>Report submitted!\n</tr><br>
              <tr>*Issue:* ${issue}\n</tr><br>
             <tr>*${typeLabel}:* ${identifier}\n </tr><br>
              <tr>*URL:* ${link}\n</tr><br>
              <tr>${description !== '' ? `*Description:* ${description}` : '' }</tr><br>
         </table>
-            
-            `;
-
-        listSection.insertAdjacentHTML('afterBegin',reportedItem) 
+            `
+        listSection.insertAdjacentHTML('beforeend',reportedItem)
             
     }
 
@@ -102,8 +130,7 @@
         const linkElement = document.querySelector('[name="url"]');
         const link = linkElement.value;
         if (link !== null && link !== "") {
-            const elementsWithHref = document.querySelectorAll(`[href="${link}"]`);
-            console.log(elementsWithHref);
+            const elementsWithHref = document.querySelectorAll(`[href="${link}"],[src="${link}"]`);
     
             if (elementsWithHref.length === 0) {
                 alert('Link not found');
@@ -127,6 +154,19 @@
     }
     
 
+    
+
+    function copyToClipboard() {
+        const textToCopy = listSection.innerText.replace(/\n\n/g, '\n'); 
+        navigator.clipboard.writeText(textToCopy)
+            .then(() => {
+                alert('Text copied to clipboard!');
+            })
+            .catch((error) => {
+                alert('Failed to copy', error);
+            });
+    }
+
     // Expand button
     const expandBtn = document.createElement('div');
     expandBtn.classList.add('expandIcon');
@@ -137,19 +177,10 @@
         menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'flex' : 'none';
         expandBtn.classList.toggle('rotate');
         
-
-    //Switch Sections
-    const iconSwitch = document.querySelector(`.switcher`);
-    iconSwitch.classList.add('iconSwitcher')
-    if (iconSwitch) {
-        iconSwitch.onclick = () => { reportSection.style.display = (reportSection.style.display === 'block' ? 'none' : 'block')
-                                     listSection.style.display = (listSection.style.display === 'none' ? 'flex' : 'none')   
-
-        };
-    }
     };
 
-
+    
+    
 
 
         // IBM Plex Font
@@ -158,9 +189,9 @@
         link.setAttribute('href', 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap');
         document.head.appendChild(link);
     
+        
+        // Styling elements
     const theStyle = document.createElement('STYLE');
-
-    // Styling elements
     theStyle.innerHTML = `
         * {
             padding: 0;
@@ -183,6 +214,7 @@
             row-gap: 3em !important;
             z-index: 9999;
             border-radius:6px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
             
         }
 
@@ -192,7 +224,7 @@
         }
 
         .listSection{
-            display:none ;
+            display: none;
             flex-direction:column;
             overflow-y: scroll;
             overflow-x: hidden;
@@ -200,6 +232,12 @@
             background-color:#FFF;
             
         }
+
+        .reportSection{
+         display:block;
+        }
+
+
         .floatinIcons{
             position:absolute;
              top:5%;
@@ -286,15 +324,18 @@
         .report{
             display:block;
         }
-        .currentList{
-            display:none;
-        }
 
-        .iconSwitcher{
-            cursor:pointer;
+        .floatinIcons i{
+          cursor:pointer;
             user-select: none;
-
+            
         }
+
+        .floatinIcons i:hover{
+            color:#0050E6;
+        }
+
+   
     `;
 
     document.querySelector('body').appendChild(theStyle);
