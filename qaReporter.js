@@ -6,6 +6,7 @@
 // @match        https://www.ibm.com/*
 // @match        http://127.0.0.1:5500/*
 // @match        https://author-p131558-e1281329.adobeaemcloud.com/*
+// @match        https://wwwstage.ibm.com/*
 // @match        https://prod-author.roks.cms.cis.ibm.net/content/*
 // @grant        none
 // ==/UserScript==
@@ -103,7 +104,7 @@
 
     //Clear inputs
     function clearInputs(){
-        document.getElementById("url").value = ""; //
+        document.getElementById("url").value = ""; 
         document.getElementById("issue").selectedIndex = 0;
         document.getElementById("detail").value = "";
     }
@@ -310,6 +311,7 @@
             gap: 16px;
             border: 1px solid transparent; 
             opacity: 1; 
+            background-color:white;
         }
 
         .label {
