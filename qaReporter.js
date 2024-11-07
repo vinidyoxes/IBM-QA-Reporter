@@ -196,7 +196,7 @@
     theStyle.innerHTML = `
 
         .menu {
-            position: sticky;
+            position: fixed;
             bottom: 12%;
             left: 1%;
             width: 16%; 
@@ -267,7 +267,7 @@
             color: white;
             cursor: pointer;
             user-select: none;
-            position: sticky;
+            position: fixed;
             bottom: 5%;
             left: 1%;
             transition: transform 0.3s ease; 
