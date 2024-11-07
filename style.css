@@ -1,3 +1,7 @@
 .menu.dark{
     
 }
+
+.floatinIcons i:hover{
+    color:blue;
+}
