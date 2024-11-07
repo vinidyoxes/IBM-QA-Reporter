@@ -45,11 +45,11 @@
         <form class="form">
             <div class="step">
                 <p class="stepTitle">1.Paste the URL</p>
-                <input type="text" id="url" name="url"></input>
+                <input data-report-input type="text" id="url" name="url"></input>
             </div>
             <div class="step">
                 <p class="stepTitle">2. Select the issue</p>
-                <select name="issues" id="issue">
+                <select name="issues" id="issue" data-report-select>
                     <option value="Broken Link">Broken Link</option>
                     <option value="Redirect">Redirect</option>
                     <option value="Video">Broken Video</option>
@@ -60,10 +60,10 @@
             <div class="step">
                 <p class="stepTitle">3. Description (Optional)</p>
 
-                <input type="text" id="detail" class="input" name="detail">
+                <input data-report-input type="text" id="detail" class="input" name="detail">
             </div>
             <div class="step">
-                <input type="button" value="Report!" class="button" id="reportButton">
+                <input data-report-button type="button" value="Report!" id="reportButton">
             </div>
         </form>
         </section>
@@ -288,7 +288,7 @@
             gap: 0;
         }
 
-        .button {
+        [data-report-button] {
             background-color: #0F62FE;
             color: white;
             border: none;
@@ -296,12 +296,12 @@
             font-weight: bold;
         }
 
-        .button:hover {
+        [data-report-button]:hover {
             cursor: pointer;
             background-color: #0050E6;
         }
 
-        input, select {
+        [data-report-input], [data-report-select] {
             width:auto;
             height: 48px; 
             padding: 15px 16px;
@@ -339,6 +339,6 @@
     document.querySelector('body').appendChild(theStyle);
 
     //start the Reporter
-    setTimeout(Reporter(),2000)
+    setTimeout(Reporter(),1000)
 
 })();
