@@ -73,7 +73,8 @@
         </section>
 
         `);
-        document.body.appendChild(menu);
+        document.body.insertAdjacentElement('afterend',menu)
+        //document.body.appendChild(menu);
         
         reportSection = menu.querySelector('.reportSection');
         listSection = menu.querySelector('.listSection')
@@ -193,13 +194,9 @@
         // Styling elements
     const theStyle = document.createElement('STYLE');
     theStyle.innerHTML = `
-        * {
-            padding: 0;
-            margin: 0;
-        }
 
         .menu {
-            position: fixed;
+            position: sticky;
             bottom: 12%;
             left: 1%;
             width: 16%; 
@@ -270,7 +267,7 @@
             color: white;
             cursor: pointer;
             user-select: none;
-            position: fixed;
+            position: sticky;
             bottom: 5%;
             left: 1%;
             transition: transform 0.3s ease; 
@@ -342,6 +339,6 @@
     document.querySelector('body').appendChild(theStyle);
 
     //start the Reporter
-    Reporter();
+    setTimeout(Reporter(),2000)
 
 })();
