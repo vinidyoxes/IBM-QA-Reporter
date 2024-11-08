@@ -149,7 +149,14 @@
     function handleItem(card, link) {
         const issue = document.querySelector('[name="issues"]').value;
         const description = document.querySelector('[name="detail"]').value;
-        const identifier = card.textContent.trim();
+        const identifier = function(){
+            //Skip the QA Helper text
+           let componentText = card.textContent.trim()
+            let componentHelperTextRemover = componentText.split("•")[0];
+            console.log(componentHelperTextRemover);
+            return componentHelperTextRemover()
+        }
+
         logReport(issue, link, description, "element", identifier);
         clearInputs();
     }
@@ -192,8 +199,8 @@
     
         
         // Styling elements
-    const theStyle = document.createElement('STYLE');
-    theStyle.innerHTML = `
+    const Style = document.createElement('STYLE');
+    Style.innerHTML = `
 
         .menu {
             position: fixed;
@@ -336,7 +343,7 @@
    
     `;
 
-    document.querySelector('body').appendChild(theStyle);
+    document.querySelector('body').appendChild(Style);
 
     //start the Reporter
     setTimeout(Reporter(),1000)
