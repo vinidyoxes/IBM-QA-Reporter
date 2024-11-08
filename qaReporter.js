@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         QA Reporter
-// @version      1.0.1
+// @name         QA Reporter Beta
+// @version      1.0.2
 // @description  Just a tool for doing reports!
 // @author       Vinicius Ortega <- contact for help
 // @match        https://www.ibm.com/*
@@ -154,10 +154,10 @@
            let componentText = card.textContent.trim()
             let componentHelperTextRemover = componentText.split("•")[0];
             console.log(componentHelperTextRemover);
-            return componentHelperTextRemover()
+            return componentHelperTextRemover
         }
 
-        logReport(issue, link, description, "element", identifier);
+        logReport(issue, link, description, "element", identifier());
         clearInputs();
     }
     
