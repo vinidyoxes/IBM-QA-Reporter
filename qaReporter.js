@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         QA Reporter Beta
+// @name         QA Reporter 
 // @version      1.0.2
 // @description  Just a tool for doing reports!
 // @author       Vinicius Ortega <- contact for help
@@ -16,7 +16,7 @@
 
     let listSection;
     let reportSection;
-    const version = "1.0.1";
+    const version = "1.0.2";
 
     const Reporter = () => {
         
