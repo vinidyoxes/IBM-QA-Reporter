@@ -151,10 +151,10 @@
         const description = document.querySelector('[name="detail"]').value;
         const identifier = function(){
             //Skip the QA Helper text
-           let componentText = card.textContent.trim()
-            let componentHelperTextRemover = componentText.split("•")[0];
-            console.log(componentHelperTextRemover);
-            return componentHelperTextRemover
+            let cardWithoutHelper = card.cloneNode(true)
+            cardWithoutHelper.querySelectorAll(".ibm-bold").forEach(el => el.remove());
+           let componentText = cardWithoutHelper.textContent.trim()
+            return componentText
         }
 
         logReport(issue, link, description, "element", identifier());
