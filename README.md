@@ -14,7 +14,7 @@ The QA Reporter is a tool focused on helping anyone who needs to create reports 
 
 ### ⚙️ How to use
 
-Please check this video tutorial
+Please check this [video tutorial](https://ibm.box.com/s/fy2x6xp646kshw68pegqj4ojpybmk4iz)
 
 
 ## 📌 Changelog
