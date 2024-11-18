@@ -2,12 +2,13 @@
 // @name         QA Reporter 
 // @version      1.0.2
 // @description  Just a tool for doing reports!
-// @author       Vinicius Ortega <- contact for help
+// @author       Vinicius Ortega 
 // @match        https://www.ibm.com/*
 // @match        http://127.0.0.1:5500/*
 // @match        https://author-p131558-e1281329.adobeaemcloud.com/*
 // @match        https://wwwstage.ibm.com/*
 // @match        https://prod-author.roks.cms.cis.ibm.net/content/*
+// @exclude      https://author-p131558-e1281329.adobeaemcloud.com/editor.html/*
 // @grant        none
 // ==/UserScript==
 
@@ -27,14 +28,14 @@
             <span class='stepTitle' >QA Reporter</span>
             <span style="font-size:14px">v${version}</span>
             <div class="floatinIcons">
-            <i data-function="list" class='switcher' >
+            <i data-function="list" class='switcher' title="Current List" >
                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5"/>
                 </svg>
 
             </i> 
 
-            <i class='copyIcon'><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <i title="Copy" class='copyIcon'><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M9 8v3a1 1 0 0 1-1 1H5m11 4h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1m4 3v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-7.13a1 1 0 0 1 .24-.65L7.7 8.35A1 1 0 0 1 8.46 8H13a1 1 0 0 1 1 1Z"/>
                 </svg>
             </i>
@@ -102,6 +103,12 @@
         
     };
     
+    //Remove single item on the current list
+    
+    function removeItem(event){ 
+        console.log(this.parentNode)
+
+    }
 
     //Clear inputs
     function clearInputs(){
@@ -115,12 +122,19 @@
     function logReport(issue, link, description, type, identifier) {
         const typeLabel = type === "heading" ? "Heading" : "CTA";
         const reportedItem = `
-        <table>
-             <tr>*Issue:* ${issue}\n</tr><br>
-             <tr>*${typeLabel}:* ${identifier}\n </tr><br>
-             <tr>*URL:* ${link}\n</tr><br>
-             <tr>${description !== '' ? `*Description:* ${description}` : '' }</tr><br>
-        </table>
+        <div class='itemList'>
+             <div class='removeIcon' title='Remove' onclick='this.parentElement.remove()'><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
+</svg></div>
+
+
+            <table>
+                <tr>*Issue:* ${issue}\n</tr><br>
+                <tr>*${typeLabel}:* ${identifier}\n </tr><br>
+                <tr>*URL:* ${link}\n</tr><br>
+                <tr>${description !== '' ? `*Description:* ${description}` : '' }</tr><br>
+            </table>
+        <div>
             `
         listSection.insertAdjacentHTML('beforeend',reportedItem)
             
@@ -163,7 +177,7 @@
     
 
     
-
+    //Copy function
     function copyToClipboard() {
         const textToCopy = listSection.innerText.replace(/\n\n/g, '\n'); 
         navigator.clipboard.writeText(textToCopy)
@@ -174,6 +188,8 @@
                 alert('Failed to copy', error);
             });
     }
+
+    
 
     // Expand button
     const expandBtn = document.createElement('div');
@@ -188,9 +204,6 @@
     };
 
     
-    
-
-
         // IBM Plex Font
         var link = document.createElement('link');
         link.setAttribute('rel', 'stylesheet');
@@ -206,7 +219,7 @@
             position: fixed;
             bottom: 12%;
             left: 1%;
-            width: 16%; 
+            width: 20%; 
             max-height: 80%; 
             display: none;
             flex-direction:column;
@@ -231,7 +244,7 @@
             display: none;
             flex-direction:column;
             overflow-y: scroll;
-            overflow-x: hidden;
+            overflow-x: scroll;
             max-height:40vh;
             background-color:#FFF;
             
@@ -246,7 +259,22 @@
             position:absolute;
              top:5%;
              right:5%;
+            cursor:pointer;
+            user-select: none;
         }
+
+        .floatinIcons i:hover{
+        color:#0050E6;
+        }
+
+        .removeIcon{
+            cursor:pointer;
+            user-select: none;
+        }
+        .removeIcon:hover{
+            color:#0050E6;
+        }    
+
         .header{ 
             display:flex;
             flex-direction:column;
@@ -330,16 +358,17 @@
             display:block;
         }
 
-        .floatinIcons i{
-          cursor:pointer;
-            user-select: none;
-            
-        }
 
-        .floatinIcons i:hover{
-            color:#0050E6;
-        }
 
+        .itemList{
+            padding: 5% 0 0 0;
+            display:flex;
+            flex-direction: row;
+            align-items:center;
+            column-gap: 5%;
+            gap:5%;
+            border-bottom: solid 2px #A5A5A5;
+        }
    
     `;
 
