@@ -68,8 +68,7 @@
             </div>
         </form>
         </section>
-        <section class="listSection input">
-            
+        <section class="listSection"> 
           
         </section>
 
@@ -368,7 +367,8 @@
             align-items:center;
             column-gap: 5%;
             gap:5%;
-            border-bottom: solid 2px #A5A5A5;
+            border-bottom: solid .5px #D3D3D3;
+            width:100%;
         }
    
     `;
