@@ -18,7 +18,9 @@ Please check this [video tutorial](https://ibm.box.com/s/fy2x6xp646kshw68pegqj4o
 
 
 ## 📌 Changelog
-
+#### v1.0.4
+	- Added Approved or reproved function to the reporter
+ 	- Ability to insert the live page url on the report
 #### v1.0.3
 	- Remove a specific reported item on the current list;
 
