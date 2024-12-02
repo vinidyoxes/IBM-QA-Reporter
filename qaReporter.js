@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         QA Reporter 
-// @version      1.0.3
+// @version      1.0.4
 // @description  Just a tool for doing reports!
 // @author       Vinicius Ortega 
 // @match        https://www.ibm.com/*
@@ -17,7 +17,37 @@
 
     let listSection;
     let reportSection;
-    const version = "1.0.3";
+    let itensSection;
+    const version = "1.0.4";
+    let pageStatusController = {
+        approved: '(/) Tech QA *{color:#00875a}Approved{color}*',
+        reproved: '(x) Tech QA {color:#de350b}*Reproved*{color}',
+        na: ""
+    }
+
+    const languages = {
+        en: 'us-en',
+        de:'de-de',
+       es_es: 'es-es', es: 'es-es',fr: 'fr-fr', it: 'it-it', id: 'id-id', ja: 'jp-ja', ko:'kr-ko', ko_kr: 'kr-ko', zh: 'cn-zh', zh_cn: 'cn-zh', pt_br: 'br-pt', pt:'br-pt', es_la: 'mx-es'
+    }
+
+        const liveURL = () => {
+            const currentUrl = window.location.pathname;
+            let splitedUrl = currentUrl.split('/')
+            let path = []
+            for (let i = 5; i < splitedUrl.length; i++) {
+                if(splitedUrl[4] == 'es' && splitedUrl[3] == 'mx'){}
+                const element = splitedUrl[i].toString();
+                path.push(element)
+            }
+            if(splitedUrl[3] === 'mx'){
+                return `https://www.ibm.com/mx-es/${path.join('/')}`
+
+            } else{
+
+                return `https://www.ibm.com/${languages[splitedUrl[4]]}/${path.join('/')}`
+            }
+        }
 
     const Reporter = () => {
         
@@ -69,15 +99,38 @@
         </form>
         </section>
         <section class="listSection"> 
-          
+            <p class='stepTitle'> Current Reports</p>
+            <div class="itensSection"> </div>
+            <form data-form>
+            <fieldset data-form-status>
+                <legend class='stepTitle'>Page Status</legend>
+                <input type="radio" id="approved" name="pageStatus" value="approved">
+                <label for="approved">Approved</label><br>
+                <input type="radio" id="reproved" name="pageStatus" value="reproved">
+                <label for="reproved">Reproved</label><br>
+                <input type="radio" id="na" name="pageStatus" value="na">
+                <label for="na">NA</label><br>
+
+              </fieldset>
+
+        
+          <fieldset data-form-links>
+                <div>
+                    <input type="checkbox" id="published" name="published" />
+                    <label for="published">Page published?</label>
+                </div>
+                </fieldset>
+            
+            </form>
         </section>
 
         `);
+       
         document.body.insertAdjacentElement('afterend',menu)
-        //document.body.appendChild(menu);
         
         reportSection = menu.querySelector('.reportSection');
         listSection = menu.querySelector('.listSection')
+        itensSection = menu.querySelector('.itensSection')
 
         //Report button    
         const reportButton = document.getElementById("reportButton");
@@ -99,15 +152,12 @@
         if (iconCopy) {
             iconCopy.onclick = copyToClipboard;
         } 
+
+        handleFormUpdates()
         
     };
     
-    //Remove single item on the current list
     
-    function removeItem(event){ 
-        console.log(this.parentNode)
-
-    }
 
     //Clear inputs
     function clearInputs(){
@@ -123,10 +173,8 @@
         const reportedItem = `
         <div class='itemList'>
              <div class='removeIcon' title='Remove' onclick='this.parentElement.remove()'><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-  <path fill-rule="evenodd" d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
-</svg></div>
-
-
+            <path fill-rule="evenodd" d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
+            </svg></div>
             <table>
                 <tr>*Issue:* ${issue}\n</tr><br>
                 <tr>*${typeLabel}:* ${identifier}\n </tr><br>
@@ -135,7 +183,7 @@
             </table>
         <div>
             `
-        listSection.insertAdjacentHTML('beforeend',reportedItem)
+        itensSection.insertAdjacentHTML('beforeend',reportedItem)
             
     }
 
@@ -158,11 +206,14 @@
             alert("Link inválido");
         }
     }
-    
+
+
+
     function handleItem(card, link) {
         const issue = document.querySelector('[name="issues"]').value;
         const description = document.querySelector('[name="detail"]').value;
         const identifier = function(){
+
             //Skip the QA Helper text
             let cardWithoutHelper = card.cloneNode(true)
             cardWithoutHelper.querySelectorAll(".ibm-bold").forEach(el => el.remove());
@@ -174,11 +225,50 @@
         clearInputs();
     }
     
+    function handleFormUpdates() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const radioButtons = document.querySelectorAll('input[name="pageStatus"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const pagePublication = `
+            <p class="pagePublication">
+                Page published: ${liveURL()}
+            </p>
+            `
+        if(checkbox.checked)
+        { 
+             itensSection.insertAdjacentHTML('afterbegin',pagePublication)
+        } else {
+            itensSection.querySelector('.pagePublication').remove()
+
+        }   
+        });
+    });
+
+
+
+    radioButtons.forEach(radioButton => {
+        radioButton.addEventListener('change', () => {
+             const pageStatusReport = `
+            <p class="pageStatusReport">
+                ${pageStatusController[radioButton.value]}
+            </p>
+            `
+        if(itensSection.querySelector('.pageStatusReport'))
+        { 
+            itensSection.querySelector('.pageStatusReport').remove()
+        }    
+        itensSection.insertAdjacentHTML('afterbegin',pageStatusReport)
+            
+            
+        });
+    });
+}
 
     
     //Copy function
     function copyToClipboard() {
-        const textToCopy = listSection.innerText.replace(/\n\n/g, '\n'); 
+        const textToCopy = itensSection.innerText.replace(/\n\n/g, '\n'); 
         navigator.clipboard.writeText(textToCopy)
             .then(() => {
                 alert('Text copied to clipboard!');
@@ -201,6 +291,9 @@
         expandBtn.classList.toggle('rotate');
         
     };
+
+
+
 
     
         // IBM Plex Font
@@ -242,13 +335,17 @@
         .listSection{
             display: none;
             flex-direction:column;
+            
+        }
+        
+        .itensSection{
+            display:flex;
+            flex-direction:column;
             overflow-y: scroll;
             overflow-x: scroll;
             max-height:40vh;
             background-color:#FFF;
-            
         }
-
         .reportSection{
          display:block;
         }
@@ -344,6 +441,17 @@
             border: 1px solid transparent; 
             opacity: 1; 
             background-color:white;
+        }
+        
+
+        [data-form]{
+            padding: 5% 0px;
+        }
+
+        [data-form-status] {
+            display:flex;
+            flex-direction:row;
+            padding: 5px 0px
         }
 
         .label {
