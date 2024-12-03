@@ -28,7 +28,7 @@
     const languages = {
         en: 'us-en',
         de:'de-de',
-       es_es: 'es-es', es: 'es-es',fr: 'fr-fr', it: 'it-it', id: 'id-id', ja: 'jp-ja', ko:'kr-ko', ko_kr: 'kr-ko', zh: 'cn-zh', zh_cn: 'cn-zh', pt_br: 'br-pt', pt:'br-pt', es_la: 'mx-es'
+       es_es: 'es-es', es: 'es-es',fr: 'fr-fr', it: 'it-it', id: 'id-id', ja: 'jp-ja', ko:'kr-ko', ko_kr: 'kr-ko', zh: 'cn-zh', zh_cn: 'cn-zh', pt_br: 'br-pt', pt:'br-pt', es_la: 'mx-es', ar:'sa-ar'
     }
 
         const liveURL = () => {
@@ -36,7 +36,6 @@
             let splitedUrl = currentUrl.split('/')
             let path = []
             for (let i = 5; i < splitedUrl.length; i++) {
-                if(splitedUrl[4] == 'es' && splitedUrl[3] == 'mx'){}
                 const element = splitedUrl[i].toString();
                 path.push(element)
             }
