@@ -1,13 +1,14 @@
 // ==UserScript==
-// @name         QA Reporter
-// @version      1.0.1
+// @name         QA Reporter 
+// @version      1.0.4
 // @description  Just a tool for doing reports!
-// @author       Vinicius Ortega <- contact for help
+// @author       Vinicius Ortega 
 // @match        https://www.ibm.com/*
 // @match        http://127.0.0.1:5500/*
 // @match        https://author-p131558-e1281329.adobeaemcloud.com/*
 // @match        https://wwwstage.ibm.com/*
 // @match        https://prod-author.roks.cms.cis.ibm.net/content/*
+// @exclude      https://author-p131558-e1281329.adobeaemcloud.com/editor.html/*
 // @grant        none
 // ==/UserScript==
 
@@ -16,7 +17,37 @@
 
     let listSection;
     let reportSection;
-    const version = "1.0.1";
+    let itensSection;
+    const version = "1.0.4";
+    let pageStatusController = {
+        approved: '(/) Tech QA *{color:#00875a}Approved{color}*',
+        reproved: '(x) Tech QA {color:#de350b}*Reproved*{color}',
+        na: ""
+    }
+
+    const languages = {
+        en: 'us-en',
+        de:'de-de',
+       es_es: 'es-es', es: 'es-es',fr: 'fr-fr', it: 'it-it', id: 'id-id', ja: 'jp-ja', ko:'kr-ko', ko_kr: 'kr-ko', zh: 'cn-zh', zh_cn: 'cn-zh', pt_br: 'br-pt', pt:'br-pt', es_la: 'mx-es'
+    }
+
+        const liveURL = () => {
+            const currentUrl = window.location.pathname;
+            let splitedUrl = currentUrl.split('/')
+            let path = []
+            for (let i = 5; i < splitedUrl.length; i++) {
+                if(splitedUrl[4] == 'es' && splitedUrl[3] == 'mx'){}
+                const element = splitedUrl[i].toString();
+                path.push(element)
+            }
+            if(splitedUrl[3] === 'mx'){
+                return `https://www.ibm.com/mx-es/${path.join('/')}`
+
+            } else{
+
+                return `https://www.ibm.com/${languages[splitedUrl[4]]}/${path.join('/')}`
+            }
+        }
 
     const Reporter = () => {
         
@@ -27,14 +58,14 @@
             <span class='stepTitle' >QA Reporter</span>
             <span style="font-size:14px">v${version}</span>
             <div class="floatinIcons">
-            <i data-function="list" class='switcher' >
-               <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <i data-function="list" class='switcher' title="Current List" >
+               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 8h10M9 12h10M9 16h10M4.99 8H5m-.02 4h.01m0 4H5"/>
                 </svg>
 
             </i> 
 
-            <i class='copyIcon'><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <i title="Copy" class='copyIcon'><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M9 8v3a1 1 0 0 1-1 1H5m11 4h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1m4 3v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-7.13a1 1 0 0 1 .24-.65L7.7 8.35A1 1 0 0 1 8.46 8H13a1 1 0 0 1 1 1Z"/>
                 </svg>
             </i>
@@ -45,11 +76,11 @@
         <form class="form">
             <div class="step">
                 <p class="stepTitle">1.Paste the URL</p>
-                <input type="text" id="url" name="url"></input>
+                <input data-report-input type="text" id="url" name="url"></input>
             </div>
             <div class="step">
                 <p class="stepTitle">2. Select the issue</p>
-                <select name="issues" id="issue">
+                <select name="issues" id="issue" data-report-select>
                     <option value="Broken Link">Broken Link</option>
                     <option value="Redirect">Redirect</option>
                     <option value="Video">Broken Video</option>
@@ -60,23 +91,46 @@
             <div class="step">
                 <p class="stepTitle">3. Description (Optional)</p>
 
-                <input type="text" id="detail" class="input" name="detail">
+                <input data-report-input type="text" id="detail" class="input" name="detail">
             </div>
             <div class="step">
-                <input type="button" value="Report!" class="button" id="reportButton">
+                <input data-report-button type="button" value="Report!" id="reportButton">
             </div>
         </form>
         </section>
-        <section class="listSection input">
+        <section class="listSection"> 
+            <p class='stepTitle'> Current Reports</p>
+            <div class="itensSection"> </div>
+            <form data-form>
+            <fieldset data-form-status>
+                <legend class='stepTitle'>Page Status</legend>
+                <input type="radio" id="approved" name="pageStatus" value="approved">
+                <label for="approved">Approved</label><br>
+                <input type="radio" id="reproved" name="pageStatus" value="reproved">
+                <label for="reproved">Reproved</label><br>
+                <input type="radio" id="na" name="pageStatus" value="na">
+                <label for="na">NA</label><br>
+
+              </fieldset>
+
+        
+          <fieldset data-form-links>
+                <div>
+                    <input type="checkbox" id="published" name="published" />
+                    <label for="published">Page published?</label>
+                </div>
+                </fieldset>
             
-          
+            </form>
         </section>
 
         `);
-        document.body.appendChild(menu);
+       
+        document.body.insertAdjacentElement('afterend',menu)
         
         reportSection = menu.querySelector('.reportSection');
         listSection = menu.querySelector('.listSection')
+        itensSection = menu.querySelector('.itensSection')
 
         //Report button    
         const reportButton = document.getElementById("reportButton");
@@ -98,8 +152,11 @@
         if (iconCopy) {
             iconCopy.onclick = copyToClipboard;
         } 
+
+        handleFormUpdates()
         
     };
+    
     
 
     //Clear inputs
@@ -114,14 +171,19 @@
     function logReport(issue, link, description, type, identifier) {
         const typeLabel = type === "heading" ? "Heading" : "CTA";
         const reportedItem = `
-        <table>
-             <tr>*Issue:* ${issue}\n</tr><br>
-             <tr>*${typeLabel}:* ${identifier}\n </tr><br>
-             <tr>*URL:* ${link}\n</tr><br>
-             <tr>${description !== '' ? `*Description:* ${description}` : '' }</tr><br>
-        </table>
+        <div class='itemList'>
+             <div class='removeIcon' title='Remove' onclick='this.parentElement.remove()'><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
+            </svg></div>
+            <table>
+                <tr>*Issue:* ${issue}\n</tr><br>
+                <tr>*${typeLabel}:* ${identifier}\n </tr><br>
+                <tr>*URL:* ${link}\n</tr><br>
+                <tr>${description !== '' ? `*Description:* ${description}` : '' }</tr><br>
+            </table>
+        <div>
             `
-        listSection.insertAdjacentHTML('beforeend',reportedItem)
+        itensSection.insertAdjacentHTML('beforeend',reportedItem)
             
     }
 
@@ -144,20 +206,69 @@
             alert("Link inválido");
         }
     }
-    
+
+
+
     function handleItem(card, link) {
         const issue = document.querySelector('[name="issues"]').value;
         const description = document.querySelector('[name="detail"]').value;
-        const identifier = card.textContent.trim();
-        logReport(issue, link, description, "element", identifier);
+        const identifier = function(){
+
+            //Skip the QA Helper text
+            let cardWithoutHelper = card.cloneNode(true)
+            cardWithoutHelper.querySelectorAll(".ibm-bold").forEach(el => el.remove());
+           let componentText = cardWithoutHelper.textContent.trim()
+            return componentText
+        }
+
+        logReport(issue, link, description, "element", identifier());
         clearInputs();
     }
     
+    function handleFormUpdates() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const radioButtons = document.querySelectorAll('input[name="pageStatus"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const pagePublication = `
+            <p class="pagePublication">
+                Page published: ${liveURL()}
+            </p>
+            `
+        if(checkbox.checked)
+        { 
+             itensSection.insertAdjacentHTML('afterbegin',pagePublication)
+        } else {
+            itensSection.querySelector('.pagePublication').remove()
+
+        }   
+        });
+    });
+
+
+
+    radioButtons.forEach(radioButton => {
+        radioButton.addEventListener('change', () => {
+             const pageStatusReport = `
+            <p class="pageStatusReport">
+                ${pageStatusController[radioButton.value]}
+            </p>
+            `
+        if(itensSection.querySelector('.pageStatusReport'))
+        { 
+            itensSection.querySelector('.pageStatusReport').remove()
+        }    
+        itensSection.insertAdjacentHTML('afterbegin',pageStatusReport)
+            
+            
+        });
+    });
+}
 
     
-
+    //Copy function
     function copyToClipboard() {
-        const textToCopy = listSection.innerText.replace(/\n\n/g, '\n'); 
+        const textToCopy = itensSection.innerText.replace(/\n\n/g, '\n'); 
         navigator.clipboard.writeText(textToCopy)
             .then(() => {
                 alert('Text copied to clipboard!');
@@ -166,6 +277,8 @@
                 alert('Failed to copy', error);
             });
     }
+
+    
 
     // Expand button
     const expandBtn = document.createElement('div');
@@ -179,10 +292,10 @@
         
     };
 
-    
-    
 
 
+
+    
         // IBM Plex Font
         var link = document.createElement('link');
         link.setAttribute('rel', 'stylesheet');
@@ -191,18 +304,14 @@
     
         
         // Styling elements
-    const theStyle = document.createElement('STYLE');
-    theStyle.innerHTML = `
-        * {
-            padding: 0;
-            margin: 0;
-        }
+    const Style = document.createElement('STYLE');
+    Style.innerHTML = `
 
         .menu {
             position: fixed;
             bottom: 12%;
             left: 1%;
-            width: 16%; 
+            width: 20%; 
             max-height: 80%; 
             display: none;
             flex-direction:column;
@@ -226,13 +335,17 @@
         .listSection{
             display: none;
             flex-direction:column;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            max-height:40vh;
-            background-color:#FFF;
             
         }
-
+        
+        .itensSection{
+            display:flex;
+            flex-direction:column;
+            overflow-y: scroll;
+            overflow-x: scroll;
+            max-height:40vh;
+            background-color:#FFF;
+        }
         .reportSection{
          display:block;
         }
@@ -242,7 +355,23 @@
             position:absolute;
              top:5%;
              right:5%;
+            cursor:pointer;
+            user-select: none;
         }
+
+        .floatinIcons i:hover{
+        color:#0050E6;
+        }
+
+        .removeIcon{
+            cursor:pointer;
+            user-select: none;
+            color:#5C5D5E;
+        }
+        .removeIcon:hover{
+            color:#0050E6;
+        }    
+
         .header{ 
             display:flex;
             flex-direction:column;
@@ -291,7 +420,7 @@
             gap: 0;
         }
 
-        .button {
+        [data-report-button] {
             background-color: #0F62FE;
             color: white;
             border: none;
@@ -299,12 +428,12 @@
             font-weight: bold;
         }
 
-        .button:hover {
+        [data-report-button]:hover {
             cursor: pointer;
             background-color: #0050E6;
         }
 
-        input, select {
+        [data-report-input], [data-report-select] {
             width:auto;
             height: 48px; 
             padding: 15px 16px;
@@ -312,6 +441,17 @@
             border: 1px solid transparent; 
             opacity: 1; 
             background-color:white;
+        }
+        
+
+        [data-form]{
+            padding: 5% 0px;
+        }
+
+        [data-form-status] {
+            display:flex;
+            flex-direction:row;
+            padding: 5px 0px
         }
 
         .label {
@@ -326,22 +466,24 @@
             display:block;
         }
 
-        .floatinIcons i{
-          cursor:pointer;
-            user-select: none;
-            
-        }
 
-        .floatinIcons i:hover{
-            color:#0050E6;
-        }
 
+        .itemList{
+            padding: 5% 0 0 0;
+            display:flex;
+            flex-direction: row;
+            align-items:center;
+            column-gap: 5%;
+            gap:5%;
+            border-bottom: solid .5px #D3D3D3;
+            width:100%;
+        }
    
     `;
 
-    document.querySelector('body').appendChild(theStyle);
+    document.querySelector('body').appendChild(Style);
 
     //start the Reporter
-    Reporter();
+    setTimeout(Reporter(),1000)
 
 })();
