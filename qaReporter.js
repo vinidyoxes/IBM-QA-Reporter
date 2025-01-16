@@ -7,8 +7,14 @@
 // @match        http://127.0.0.1:5500/*
 // @match        https://author-p131558-e1281329.adobeaemcloud.com/*
 // @match        https://wwwstage.ibm.com/*
+// @match        https://prod-cloud-author.aem.ibm.net/*
+// @match        https://stage-cloud-author.aem.ibm.net/*
+// @match        https://dev-cloud-author.aem.ibm.net/*
 // @match        https://prod-author.roks.cms.cis.ibm.net/content/*
 // @exclude      https://author-p131558-e1281329.adobeaemcloud.com/editor.html/*
+// @exclude      https://prod-cloud-author.aem.ibm.net/editor.html/*
+// @exclude      https://stage-cloud-author.aem.ibm.net/editor.html/*
+// @exclude      https://dev-cloud-author.aem.ibm.net/editor.html/*
 // @grant        none
 // ==/UserScript==
 
